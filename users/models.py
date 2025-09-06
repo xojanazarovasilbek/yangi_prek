@@ -48,6 +48,12 @@ class CustomUser(BaseModel, AbstractUser):
             verify_type=verify_type
         )
 
+
+
+
+
+
+
     def check_username(self):
         if not self.username:
             self.username = f"ins{uuid.uuid4().__str__().split('-')[-1]}"
@@ -58,7 +64,8 @@ class CustomUser(BaseModel, AbstractUser):
             self.password = f"pas{uuid.uuid4().__str__().split('-')[-1]}"
 
     def check_email(self):
-        self.email = self.email.lower()
+        if self.email:
+            self.email = self.email.lower()
     
     def hashing_pass(self):
         self.set_password(self.password)
@@ -74,10 +81,9 @@ class CustomUser(BaseModel, AbstractUser):
         self.check_pass()
         self.hashing_pass()
     def save(self, *args, **kwargs):
-        self.clean()
         super(CustomUser, self).save(*args, **kwargs)
-
-
+        self.clean()
+        super(CustomUser, self).save(update_fields=['username','email','password'])
     
 
 EXPIRATION_PHONE = 2
